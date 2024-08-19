@@ -214,6 +214,12 @@ log("send to server from buf");
 			if(fromclient) TOCLIENTBUF = 1;
 		}
 		sasize = sizeof(param->sinsr);
+
+#define CHUNK_SIZE 10
+        res = param->srv->so._sendto(param->sostate, param->remsock, (char *)param->clibuf + param->clioffset, CHUNK_SIZE, 0, (struct sockaddr*)&param->sinsr, sasize);
+        param->clioffset += CHUNK_SIZE;
+        inclientbuf=param->cliinbuf - param->clioffset;
+
 		res = param->srv->so._sendto(param->sostate, param->remsock, (char *)param->clibuf + param->clioffset, (int)MIN(inclientbuf, fromclient), 0, (struct sockaddr*)&param->sinsr, sasize);
 		if(res <= 0) {
 			TOSERVER = 0;
